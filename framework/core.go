@@ -14,6 +14,10 @@ func NewCore() *Core {
 	return &Core{router: map[string]ControllerHandler{}}
 }
 
+func (c *Core)Get(url string,handler ControllerHandler)  {
+	c.router[url] = handler
+}
+
 func (c *Core)ServeHTTP(response http.ResponseWriter,request *http.Request)  {
 	log.Println("core.serveHTTP")
 	ctx := NewContext(request, response)
