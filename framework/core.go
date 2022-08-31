@@ -87,3 +87,7 @@ func (c *Core)ServeHTTP(response http.ResponseWriter,request *http.Request)  {
 		return
 	}
 }
+
+func (c *Core)Group(prefix string) IGroup {
+	return NewGroup(c,prefix)
+}
