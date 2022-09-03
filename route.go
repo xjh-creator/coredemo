@@ -1,11 +1,16 @@
 package main
 
-import "coredemo/framework"
+import (
+	"coredemo/framework"
+	"coredemo/framework/middleware"
+	"time"
+)
 
 // registerRouter注册路由规则
 func registerRouter(core *framework.Core)  {
 	// 静态路由+HTTP方法匹配
-	core.Get("/user/login", UserLoginController)
+	core.Get("/user/login", middleware.TimeoutHandler(UserLoginController,time.Second))
+	//core.Get("/user/login", UserLoginController)
 
 	// 批量通用前缀
 	subjectApi := core.Group("/subject")
