@@ -17,7 +17,9 @@ type Context struct {
 	responseWriter http.ResponseWriter
 	ctx            context.Context
 
-	handler        ControllerHandler
+	// 当前请求的handler链条
+	handlers        []ControllerHandler
+	index int // 当前请求调用到调用链哪个节点
 
 	// 是否超时标记位
 	hasTimeout bool
@@ -31,6 +33,7 @@ func NewContext(r *http.Request,w http.ResponseWriter) *Context {
 		responseWriter: w,
 		ctx:r.Context(),
 		writerMux: &sync.Mutex{},
+		index: 0,
 	}
 }
 
@@ -212,4 +215,20 @@ func (ctx *Context)Text(status int,obj string) error {
 }
 
 // endregion
+
+// SetHandlers 为 context 设置 handlers
+func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
+	ctx.handlers = handlers
+}
+
+// Next 核心函数，调用context的下一个函数
+func (ctx *Context) Next() error {
+	ctx.index++
+	if ctx.index < len(ctx.handlers) {
+		if err := ctx.handlers[ctx.index](ctx); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
