@@ -84,7 +84,7 @@ func (g *Group) getMiddlewares() []ControllerHandler {
 	return append(g.parent.getMiddlewares(), g.middlewares...)
 }
 
-// Use 实现 use 方法
+// Use 注册中间件
 func (g *Group) Use(middlewares ...ControllerHandler) {
 	g.middlewares = middlewares
 }

@@ -4,12 +4,12 @@ import (
 	"coredemo/framework"
 	"coredemo/framework/middleware"
 	"net/http"
-	"time"
 )
 
 func main()  {
 	core := framework.NewCore()
-	core.Use(middleware.Timeout(1 * time.Second))
+	core.Use(middleware.Recovery())
+	core.Use(middleware.Cost())
 	registerRouter(core)
 	server := &http.Server{
 		Handler: core,
