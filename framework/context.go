@@ -87,6 +87,11 @@ func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
 	ctx.handlers = handlers
 }
 
+// 设置参数
+func (ctx *Context) SetParams(params map[string]string) {
+	ctx.params = params
+}
+
 // Next 核心函数，调用context的下一个函数
 func (ctx *Context) Next() error {
 	ctx.index++

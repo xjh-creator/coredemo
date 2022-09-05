@@ -66,8 +66,8 @@ func (c *Core) Delete(url string, handlers ...ControllerHandler) {
 
 // ==== http method wrap end
 
-// FindRouteByRequest 匹配路由，如果没有匹配到，返回nil
-func (c *Core) FindRouteByRequest(request *http.Request) []ControllerHandler {
+// FindRouteNodeByRequest 匹配路由，如果没有匹配到，返回nil
+func (c *Core) FindRouteNodeByRequest(request *http.Request) *node {
 	// uri 和 method 全部转换为大写，保证大小写不敏感
 	uri := request.URL.Path
 	method := request.Method
@@ -75,7 +75,7 @@ func (c *Core) FindRouteByRequest(request *http.Request) []ControllerHandler {
 
 	// 查找第一层map
 	if methodHandlers, ok := c.router[upperMethod]; ok {
-		return methodHandlers.FindHandler(uri)
+		return methodHandlers.root.matchNode(uri)
 	}
 	return nil
 }
@@ -85,19 +85,23 @@ func (c *Core)ServeHTTP(response http.ResponseWriter,request *http.Request)  {
 	ctx := NewContext(request, response)
 
 	// 寻找路由
-	handlers := c.FindRouteByRequest(request)
-	if handlers == nil{
-		// 没有找到，这里打印日志
-		ctx.Json(404,"not found")
+	node := c.FindRouteNodeByRequest(request)
+	if node == nil {
+		// 如果没有找到，这里打印日志
+		ctx.SetStatus(404).Json("not found")
 		return
 	}
 
 	// 设置 context 中的 handlers 字段
-	ctx.SetHandlers(handlers)
+	ctx.SetHandlers(node.handlers)
+
+	// 设置参数
+	params := node.parseParamsFromEndNode(request.URL.Path)
+	ctx.SetParams(params)
 
 	// 调用路由函数，如果返回 err 代表内部错误，返回500
 	if err := ctx.Next();err != nil{
-		ctx.Json(500,"inner error")
+		ctx.SetStatus(500).Json("inner error")
 		return
 	}
 }
