@@ -4,6 +4,7 @@ import (
 	"context"
 	"coredemo/framework/gin"
 	"coredemo/framework/middleware"
+	"coredemo/provider/demo"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +15,10 @@ import (
 
 func main()  {
 	core := gin.New()
+
+	// 绑定具体的服务
+	core.Bind(&demo.DemoServiceProvider{})
+
 	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
 	registerRouter(core)
