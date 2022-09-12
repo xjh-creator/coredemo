@@ -5,6 +5,7 @@
 package gin
 
 import (
+	"coredemo/framework"
 	"fmt"
 	"html/template"
 	"net"
@@ -78,6 +79,9 @@ const (
 // Engine is the framework's instance, it contains the muxer, middleware and configuration settings.
 // Create an instance of Engine, by using New() or Default()
 type Engine struct {
+	// 容器
+	container framework.Container
+
 	RouterGroup
 
 	// RedirectTrailingSlash enables automatic redirection if the current route can't be matched but a
@@ -184,6 +188,8 @@ func New() *Engine {
 			basePath: "/",
 			root:     true,
 		},
+		// 这里注入了 container
+		container:              framework.NewHadeContainer(),
 		FuncMap:                template.FuncMap{},
 		RedirectTrailingSlash:  true,
 		RedirectFixedPath:      false,
@@ -228,7 +234,8 @@ func (engine *Engine) Handler() http.Handler {
 func (engine *Engine) allocateContext() *Context {
 	v := make(Params, 0, engine.maxParams)
 	skippedNodes := make([]skippedNode, 0, engine.maxSections)
-	return &Context{engine: engine, params: &v, skippedNodes: &skippedNodes}
+	// 在分配新的Context的时候，注入了container
+	return &Context{engine: engine, params: &v, skippedNodes: &skippedNodes, container: engine.container}
 }
 
 // Delims sets template left and right delims and returns an Engine instance.
