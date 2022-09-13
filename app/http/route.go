@@ -2,7 +2,7 @@ package http
 
 import (
 	"coredemo/framework/gin"
-	"coredemo/provider/demo"
+	"coredemo/app/http/module/demo"
 )
 
 func Routes(r *gin.Engine) {

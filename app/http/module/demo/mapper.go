@@ -1,5 +1,7 @@
 package demo
 
+import demoService "coredemo/app/provider/demo"
+
 func UserModelsToUserDTOs(models []UserModel) []UserDTO {
 	ret := []UserDTO{}
 	for _, model := range models {

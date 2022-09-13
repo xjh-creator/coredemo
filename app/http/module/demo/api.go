@@ -1,6 +1,7 @@
 package demo
 
 import (
+	demoService "coredemo/app/provider/demo"
 	"coredemo/framework/contract"
 	"coredemo/framework/gin"
 )
