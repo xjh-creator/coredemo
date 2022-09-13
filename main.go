@@ -4,7 +4,9 @@ import (
 	"context"
 	"coredemo/framework/gin"
 	"coredemo/framework/middleware"
-	"coredemo/provider/demo"
+	"coredemo/app/provider/demo"
+	"coredemo/framework/provider/app"
+	hadeHttp "coredemo/app/http"
 	"log"
 	"net/http"
 	"os"
@@ -17,11 +19,14 @@ func main()  {
 	core := gin.New()
 
 	// 绑定具体的服务
-	core.Bind(&demo.DemoServiceProvider{})
+	core.Bind(&app.HadeAppProvider{})
+	core.Bind(&demo.DemoProvider{})
 
 	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
-	registerRouter(core)
+
+	hadeHttp.Routes(core)
+
 	server := &http.Server{
 		Handler: core,
 		Addr: ":8080",
