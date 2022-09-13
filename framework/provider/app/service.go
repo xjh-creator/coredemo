@@ -3,7 +3,6 @@ package app
 import (
 	"coredemo/framework"
 	"flag"
-	"oortcloud/jos/util"
 	"path/filepath"
 )
 
