@@ -2,6 +2,7 @@ package cobra
 
 import "coredemo/framework"
 
+// SetContainer 设置服务容器
 func (c *Command) SetContainer(container framework.Container) {
 	c.container = container
 }
